@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KORE. — Our Story</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chango&family=Poppins:ital,wght@0,600;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="story">
+
+<nav id="navbar">
+  <div class="navbar-top">
+    <a href="index.html" class="logo"><img src="assets/logo.svg" alt="KORE logo" class="site-logo"></a>
+    <div class="reddit-badge">REDDIT-POWERED</div>
+  </div>
+  <div class="navbar-bottom">
+    <ul class="nav-links">
+      <li><a href="shop.html" data-page="shop">SHOP</a></li>
+      <li><a href="community.html" data-page="community">NATION</a></li>
+      <li><a href="lab.html" data-page="lab">LAB</a></li>
+      <li><a href="story.html" data-page="story">STORY</a></li>
+      <li><a href="cart.html" data-page="cart" class="cart-link">CART <span class="cart-count" id="cart-count">0</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="story-hero">
+  <h1 class="page-title">Real posts.<br>Real people.</h1>
+  <p class="subtitle">3 months in. Millions heard.</p>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span> UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ </span><span aria-hidden="true"> UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️</span>
+  </div>
+</div>
+<div class="ticker-wrap ticker-white">
+  <div class="ticker ticker-right">
+    <span>FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ </span><span aria-hidden="true">⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ </span>
+  </div>
+</div>
+
+<section class="story-content">
+  <h2 style="font-family:var(--font-title);font-size:2rem;text-transform:uppercase;letter-spacing:-1px;text-align:center;color:var(--orange);margin-bottom:30px;">FROM REDDIT TO KORE</h2>
+  <div class="story-text-block">
+    <p>KORE. started from two Reddit users, that saw potential and a lot of creativity in the posts. Users would drop their thoughts, with a lot of pain points mentionned, a really interesting opportunity to help the community is born. They started to develop the tools, and KORE. was born, 2025.</p>
+  </div>
+</section>
+
+
+
+<style>
+  .timeline-section {
+    background: var(--white);
+    padding: 80px 24px 64px;
+  }
+  .tl-heading {
+    font-family: var(--font-title);
+    font-size: clamp(3rem, 4vw, 6.5rem);
+    color: var(--pink);
+    font-style: italic;
+    text-align: center;
+    letter-spacing: -3px;
+    line-height: 0.9;
+    margin-bottom: 80px;
+    text-transform: uppercase;
+  }
+  .tl-heading .orange { color: var(--orange); }
+  .timeline {
+    max-width: 680px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .tl-group {
+    display: flex;
+    margin-bottom: 52px;
+    position: relative;
+  }
+  .tl-year {
+    font-family: var(--font-title);
+    font-size: 2rem;
+    color: var(--orange);
+    min-width: 84px;
+    text-align: right;
+    padding-right: 26px;
+    line-height: 1.2;
+    position: relative;
+  }
+  .tl-year::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: 1.4vh;
+    width: 10px;
+    height: 10px;
+    background: var(--orange);
+    border-radius: 50%;
+  }
+  .tl-events {
+    flex: 1;
+    padding-left: 26px;
+  }
+  .tl-event {
+    margin-bottom: 30px;
+    position: relative;
+  }
+  .tl-event:last-child { margin-bottom: 0; }
+  .tl-event::before {
+    content: '';
+    position: absolute;
+    left: -32px;
+    top: 7px;
+    width: 6px;
+    height: 6px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 50%;
+  }
+  .tl-tag {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.58rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--orange);
+    opacity: 0.8;
+    margin-bottom: 2px;
+  }
+  .tl-title {
+    font-family: var(--font-body);
+    font-size: 1.25rem;
+    color: var(--black);
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .tl-desc {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: 0.8rem;
+    color: var(--black);
+    line-height: 1.55;
+  }
+  .tl-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--orange);
+    text-decoration: none;
+  }
+  .tl-link:hover { text-decoration: underline; }
+  @media (max-width: 480px) {
+    .timeline::before { left: 56px; }
+    .tl-year { min-width: 56px; font-size: 1.4rem; padding-right: 18px; }
+    .tl-year::after { right: -4px; }
+    .tl-events { padding-left: 18px; }
+    .tl-event::before { left: -24px; }
+  }
+</style>
+
+<section class="timeline-section">
+  <div class="tl-heading">KORE.<br><span class="orange">THE ORIGIN STORY</span></div>
+  <div class="timeline">
+
+    <div class="tl-group">
+      <div class="tl-year">2023</div>
+      <div class="tl-events">
+        <div class="tl-event">
+          <div class="tl-tag">origin</div>
+          <div class="tl-title">Zero to two</div>
+          <div class="tl-desc">Two co-founders, one conviction. The kind of bet that starts with a conversation and ends with a domain name.</div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-tag">funding</div>
+          <div class="tl-title">FFF round</div>
+          <div class="tl-desc">Friends, Family & Fools. The only investors brave enough to say yes before the idea had a name.</div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-tag">insight</div>
+          <div class="tl-title">The Reddit signal</div>
+          <div class="tl-desc">Millions of people, one platform, endless unmet needs. Pain points weren't a problem to solve — they were a product engine.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-group">
+      <div class="tl-year">2024</div>
+      <div class="tl-events">
+        <div class="tl-event">
+          <div class="tl-tag">acceleration</div>
+          <div class="tl-title">Incubator cohort</div>
+          <div class="tl-desc">Training, mentorship, and the structured chaos of building under pressure. The idea met its first real critics.</div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-tag">process</div>
+          <div class="tl-title">Build. break. repeat.</div>
+          <div class="tl-desc">Iterative development as a discipline. Each prototype taught something the last one didn't.</div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-tag">product</div>
+          <div class="tl-title">First prototypes</div>
+          <div class="tl-desc">Raw, physical, weird. Proof that absurdity, when designed well, becomes desire.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-group">
+      <div class="tl-year">2025</div>
+      <div class="tl-events">
+        <div class="tl-event">
+          <div class="tl-tag">launch</div>
+          <div class="tl-title">MVP shipped</div>
+          <div class="tl-desc">Most Valuable Product. Not minimum — valuable. The first version people could actually buy, hold, and feel something about.</div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-tag">recognition</div>
+          <div class="tl-title">EIC Accelerator — winner</div>
+          <div class="tl-desc">European validation for a very un-European idea. The committee saw it. The market confirmed it.</div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-tag">traction</div>
+          <div class="tl-title">Market validation</div>
+          <div class="tl-desc">Real customers, real receipts. The hypothesis became a thesis.</div>
+        </div>
+        <div class="tl-event">
+          <div class="tl-tag">legal</div>
+          <div class="tl-title">Incorporated — RC</div>
+          <div class="tl-desc">A name in the registry. The moment a project becomes a company.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tl-group">
+      <div class="tl-year">2026</div>
+      <div class="tl-events">
+        <div class="tl-event">
+          <div class="tl-tag">milestone</div>
+          <div class="tl-title">Self-sufficient</div>
+          <div class="tl-desc">Revenue covers the team. The company runs on its own terms now.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="story-disclaimer">
+  <p>KORE. IS PART OF A DESIGN PROJECT, EVERYTHING HERE IS FICTION. IF YOU BELIEVED IT, ASK YOURSELF WHY?</p>
+</div>
+
+  <section class="cta-band">
+      <h2>Start your kore journey today.</h2>
+      <p class="subtitle">Your post could be next.</p>
+      <a href="community.html" class="btn-white">JOIN THE NATION</a>
+      <p class="small-text">FROM CHF 9.90.- / MONTH</p>
+    </section>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span> UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ </span><span aria-hidden="true"> UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️</span>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="logo footer-logo"><img src="assets/logo.svg" alt="KORE logo" class="site-logo"></a>
+      <p class="footer-tagline">UNLOCK YOUR KORE POTENTIAL</p>
+      <p class="footer-disclaimer">KORE. is part of a <a href="project.html">design project</a>, everything here is fiction. If you believed it, ask yourself why?</p>
+      <div class="footer-wave">
+        <img src="assets/wave-orange-rose.svg" alt="" aria-hidden="true" onerror="this.src='assets/wave-web.png'" >
+      </div>
+    </div>
+    <nav class="footer-nav">
+      <a href="index.html">HOME</a>
+      <a href="community.html">NATION</a>
+      <a href="lab.html">LAB</a>
+      <a href="story.html">STORY</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <a href="#">INSTAGRAM</a>
+    <a href="#">TIKTOK</a>
+    <a href="#">FACEBOOK</a>
+    <a href="#">LINKEDIN</a>
+    <a href="#" class="get-in-touch">GET IN TOUCH</a>
+  </div>
+</footer>
+
+<script src="loader.js"></script>
+<script src="csv-loader.js"></script>
+<script src="app.js"></script>
+<script src="animations.js"></script>
+</body>
+</html>

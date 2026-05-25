@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KORE. — The Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chango&family=Poppins:ital,wght@0,600;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body data-page="shop">
+
+<nav id="navbar">
+  <div class="navbar-top">
+    <a href="index.html" class="logo"><img src="assets/logo.svg" alt="KORE logo" class="site-logo"></a>
+    <div class="reddit-badge">REDDIT-POWERED</div>
+  </div>
+  <div class="navbar-bottom">
+    <ul class="nav-links">
+      <li><a href="shop.html" data-page="shop">SHOP</a></li>
+      <li><a href="community.html" data-page="community">NATION</a></li>
+      <li><a href="lab.html" data-page="lab">LAB</a></li>
+      <li><a href="story.html" data-page="story">STORY</a></li>
+      <li><a href="cart.html" data-page="cart" class="cart-link">CART <span class="cart-count" id="cart-count">0</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+<section class="community-hero">
+  <h1 class="page-title">REAL PROBLEM.<br>PHYSICAL FIX.</h1>
+  <p class="subtitle">NEW DROP EVERY MONTH. BASED ON YOU.</p>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span> UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ </span><span aria-hidden="true"> UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️</span>
+  </div>
+</div>
+<div class="ticker-wrap ticker-white">
+  <div class="ticker ticker-right">
+    <span>FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ </span><span aria-hidden="true">⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ </span>
+  </div>
+</div>
+
+<div class="shop-filters">
+  <button class="filter-btn active" onclick="filterProducts('all',this)">ALL TYPES</button>
+  <button class="filter-btn" onclick="filterProducts('Productivity',this)">PRODUCTIVITY</button>
+  <button class="filter-btn" onclick="filterProducts('Mental Health',this)">MENTAL HEALTH</button>
+  <button class="filter-btn" onclick="filterProducts('Health',this)">HEALTH</button>
+  <button class="filter-btn" onclick="filterProducts('Glow up',this)">GLOW UP</button>
+  <select class="sort-select" onchange="sortProducts(this.value)">
+    <option value="default">SORT: BEST SELLERS</option>
+    <option value="price-asc">PRICE: LOW TO HIGH</option>
+    <option value="price-desc">PRICE: HIGH TO LOW</option>
+  </select>
+</div>
+
+<div class="shop-grid-wrap">
+  <div class="shop-products-grid" id="shop-grid"><p class="loading-placeholder">Loading products…</p></div>
+</div>
+
+<section class="cta-band">
+  <h2>Start your kore journey today.</h2>
+  <p class="subtitle">Your post could be next.</p>
+  <a href="community.html" class="btn-outline">JOIN THE NATION</a>
+  <p class="small-text">FROM CHF 9.90.- / MONTH</p>
+</section>
+
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span> UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ </span><span aria-hidden="true"> UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️</span>
+  </div>
+</div>
+
+<div class="float-banner" aria-hidden="true">
+  <div class="float-track">
+    <!-- Duplique tous les items deux fois pour la boucle seamless -->
+    <div class="float-item"><img src="assets/objects/apppuncher.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/believeit.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/deeptie.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/innerhug.png" alt=""></div>
+    <!-- Répétition exacte pour boucle infinie seamless -->
+    <div class="float-item"><img src="assets/objects/stayfresh.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/unfog.png" alt=""></div>
+       <div class="float-item"><img src="assets/objects/apppuncher.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/believeit.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/deeptie.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/innerhug.png" alt=""></div>
+    <!-- Répétition exacte pour boucle infinie seamless -->
+    <div class="float-item"><img src="assets/objects/stayfresh.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/unfog.png" alt=""></div>
+      <div class="float-item"><img src="assets/objects/apppuncher.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/believeit.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/deeptie.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/innerhug.png" alt=""></div>
+    <!-- Répétition exacte pour boucle infinie seamless -->
+    <div class="float-item"><img src="assets/objects/stayfresh.png" alt=""></div>
+    <div class="float-item"><img src="assets/objects/unfog.png" alt=""></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="logo footer-logo"><img src="assets/logo.svg" alt="KORE logo" class="site-logo"></a>
+      <p class="footer-tagline">UNLOCK YOUR KORE POTENTIAL</p>
+      <p class="footer-disclaimer">KORE. is part of a <a href="project.html">design project</a>, everything here is fiction. If you believed it, ask yourself why?</p>
+      <div class="footer-wave">
+        <img src="assets/wave-orange-rose.svg" alt="" aria-hidden="true" onerror="this.src='assets/wave-web.png'" >
+      </div>
+    </div>
+    <nav class="footer-nav">
+      <a href="index.html">HOME</a>
+      <a href="community.html">NATION</a>
+      <a href="lab.html">LAB</a>
+      <a href="story.html">STORY</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <a href="#">INSTAGRAM</a><a href="#">TIKTOK</a><a href="#">FACEBOOK</a><a href="#">LINKEDIN</a>
+    <a href="#" class="get-in-touch">GET IN TOUCH</a>
+  </div>
+</footer>
+
+<script src="csv-loader.js"></script>
+<script src="app.js"></script>
+<script src="animations.js">
+<!--remove--></script>
+<script>
+  let currentFilter = 'all';
+  let currentSort = 'default';
+
+  function getFiltered() {
+    let list = currentFilter === 'all' ? [...products] : products.filter(p => p.collection === currentFilter);
+    if (currentSort === 'price-asc') list.sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
+    else if (currentSort === 'price-desc') list.sort((a,b) => parseFloat(b.price) - parseFloat(a.price));
+    return list;
+  }
+
+  function filterProducts(filter, btn) {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderShop();
+  }
+
+  function sortProducts(val) { currentSort = val; renderShop(); }
+
+  function renderShop() {
+    renderProducts('shop-grid', getFiltered(), true);
+  }
+
+  window.onDataReady = function() { renderShop(); };
+  initKORE();
+</script>
+</body>
+</html>

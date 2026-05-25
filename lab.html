@@ -1,0 +1,1204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KORE. — The Lab</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chango&family=Poppins:ital,wght@0,600;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* ═══ BOT SECTION ═══════════════════════════════════════════════ */
+
+      /* Teaser: 3 blurred posts shown BEFORE the button is pressed */
+      .feed-preview {
+        max-width: 700px;
+        margin: 0 auto 0;
+        position: relative;
+        overflow: hidden;
+      }
+      /* Gradient fade at the bottom to suggest more posts below */
+      .feed-preview::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100px;
+        background: linear-gradient(to bottom, transparent, var(--pink));
+        pointer-events: none;
+      }
+      .feed-hint {
+        text-align: center;
+        font-family: var(--font-body);
+        font-style: italic;
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: var(--black);
+        opacity: 0.5;
+        margin: 10px 0 24px;
+        letter-spacing: 0.02em;
+      }
+
+      /* Full live feed — hidden until bot starts */
+      .reddit-feed {
+        background: var(--white);
+        border-radius: 4px;
+        max-width: 700px;
+        margin: 0 auto 20px;
+        overflow: hidden;
+        display: none;
+      }
+      .reddit-feed.visible {
+        display: block;
+      }
+
+      .reddit-feed-header {
+        background: var(--orange);
+        color: var(--white);
+        padding: 10px 16px;
+        font-family: var(--font-body);
+        font-weight: 700;
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      /* Individual post row */
+      .reddit-post {
+        padding: 12px 16px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        background: var(--white);
+      }
+      .reddit-post:last-child {
+        border-bottom: none;
+      }
+      .reddit-post.selected {
+        background: var(--pink);
+        border-left: 4px solid var(--orange);
+      }
+      .reddit-post-votes {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        min-width: 34px;
+      }
+      .upvote {
+        color: var(--orange);
+        font-size: 0.9rem;
+      }
+      .count {
+        font-family: var(--font-body);
+        font-weight: 700;
+        font-size: 0.6rem;
+      }
+      .reddit-post-content {
+        flex: 1;
+      }
+      .reddit-post-sub {
+        font-family: var(--font-body);
+        font-weight: 700;
+        font-size: 0.6rem;
+        color: var(--orange);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 3px;
+      }
+      .reddit-post-title {
+        font-family: var(--font-body);
+        font-weight: 700;
+        font-size: 0.8rem;
+        color: var(--black);
+        line-height: 1.3;
+        margin-bottom: 3px;
+      }
+      .reddit-post-meta {
+        font-family: var(--font-body);
+        font-size: 0.6rem;
+        color: #999;
+      }
+
+      /* Scanning indicator */
+      .scanning-indicator {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-family: var(--font-body);
+        font-weight: 700;
+        font-size: 0.78rem;
+        color: var(--orange);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 10px;
+      }
+      .scanning-indicator.visible {
+        display: flex;
+      }
+
+      /* Selected post card (shown after scan) */
+      .selected-post-display {
+        background: var(--white);
+        border-left: 5px solid var(--orange);
+        padding: 20px 24px;
+        max-width: 700px;
+        margin: 20px auto 0;
+        display: none;
+      }
+      .selected-post-display.visible {
+        display: block;
+      }
+      .selected-post-header {
+        font-family: var(--font-body);
+        font-weight: 700;
+        font-size: 0.62rem;
+        color: var(--orange);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 8px;
+      }
+      .selected-post-title {
+        font-family: var(--font-body);
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--black);
+        line-height: 1.3;
+        margin-bottom: 8px;
+      }
+      .selected-post-body {
+        font-family: var(--font-body);
+        font-style: italic;
+        font-size: 0.82rem;
+        color: #333;
+        line-height: 1.5;
+        margin-bottom: 10px;
+        max-height: 100px;
+        overflow: hidden;
+      }
+      .selected-post-stats {
+        display: flex;
+        gap: 16px;
+        font-family: var(--font-body);
+        font-size: 0.62rem;
+        color: #888;
+        font-weight: 600;
+      }
+
+      /* RUN buttons */
+      .run-btn-wrap {
+        text-align: center;
+        margin: 28px 0;
+      }
+      .btn-run {
+        display: inline-block;
+        background: var(--orange);
+        color: var(--white);
+        font-family: var(--font-title);
+        font-size: 1.3rem;
+        padding: 18px 56px;
+        text-transform: uppercase;
+        letter-spacing: -0.5px;
+        cursor: pointer;
+        border: none;
+        border-radius: 40px;
+        transition:
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .btn-run:hover:not(:disabled) {
+        transform: scale(1.03);
+        box-shadow: 4px 4px 0 var(--black);
+      }
+      .btn-run:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* Category selector */
+      .category-select {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        flex-wrap: wrap;
+        padding: 0px 24px 48px;
+      }
+      .btn-cat {
+        font-family: var(--font-body);
+        font-weight: 800;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        padding: 14px 34px;
+        border-radius: 40px;
+        border: 2px solid var(--white);
+        background: var(--orange);
+        color: var(--white);
+        cursor: pointer;
+        transition:
+          border-color 0.15s,
+          background 0.15s,
+          transform 0.15s,
+          box-shadow 0.15s;
+      }
+      .btn-cat:hover:not(:disabled) {
+        border-color: var(--white);
+        transform: scale(1.04);
+        box-shadow: 3px 3px 0 rgba(255, 255, 255, 0.25);
+      }
+      .btn-cat.active {
+        background: var(--orange);
+        border-color: var(--orange);
+        color: var(--white);
+      }
+      .btn-cat:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      /* Dot loader */
+      .dot-loader {
+        display: inline-flex;
+        gap: 3px;
+        align-items: center;
+      }
+      .dot-loader span {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        background: var(--orange);
+        border-radius: 50%;
+        animation: dotPulse 1.2s infinite;
+      }
+      .dot-loader span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .dot-loader span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes dotPulse {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.5);
+          opacity: 0.3;
+        }
+        40% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* ═══ OBJECT ENGINE ══════════════════════════════════════════════ */
+      .engine-section {
+        background: var(--pink);
+        padding: 60px 40px;
+        display: none;
+      }
+      .engine-section.visible {
+        display: block;
+      }
+      .engine-section h2 {
+        font-family: var(--font-title);
+        font-size: clamp(1.6rem, 3vw, 2rem);
+        text-transform: uppercase;
+        letter-spacing: -1px;
+        text-align: center;
+        color: var(--black);
+        margin-bottom: 6px;
+      }
+      .engine-section .section-sub {
+        font-family: var(--font-body);
+        font-style: italic;
+        font-weight: 700;
+        font-size: 0.82rem;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      /* Analysis cards — start invisible, animate in */
+      .analysis-card {
+        background: var(--white);
+        border-radius: 4px;
+        max-width: 700px;
+        margin: 0 auto 20px;
+        padding: 28px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+      }
+      .analysis-card.in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .analysis-label {
+        font-family: var(--font-title);
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: -0.5px;
+        color: var(--pink);
+        margin-bottom: 14px;
+        text-align: center;
+      }
+
+      /* AI "thinking" dots shown while computing */
+      .ai-thinking {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--font-body);
+        font-style: italic;
+        font-size: 0.78rem;
+        color: #999;
+        margin-bottom: 10px;
+        min-height: 24px;
+      }
+      .ai-thinking.hidden {
+        display: none;
+      }
+
+      /* Progress bars */
+      .bar-group {
+        margin-bottom: 12px;
+      }
+      .bar-label {
+        font-family: var(--font-body);
+        font-weight: 600;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        margin-bottom: 5px;
+        color: var(--black);
+      }
+      .bar-track {
+        background: #f0f0f0;
+        height: 10px;
+        overflow: hidden;
+      }
+      /* NOTE: transition is on bar-fill, width starts at 0, JS sets target after rAF */
+      .bar-fill {
+        height: 100%;
+        background: var(--orange);
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Need + Solution text */
+      .need-result {
+        font-family: var(--font-title);
+        font-size: 1.8rem;
+        text-transform: uppercase;
+        letter-spacing: -1px;
+        color: var(--black);
+        text-align: center;
+      }
+
+      .solution-product-name {
+        font-family: var(--font-title);
+        font-size: 2rem;
+        text-transform: uppercase;
+        letter-spacing: -1px;
+        color: var(--orange);
+        text-align: center;
+        margin-top: 14px;
+      }
+
+      /* Solution media */
+      .solution-media-wrap {
+        width: 260px;
+        height: 260px;
+        margin: 16px auto 0;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .solution-media-wrap img,
+      .solution-media-wrap video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .solution-generating {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        font-family: var(--font-body);
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #999;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .solution-shop-link {
+        text-align: center;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body data-page="lab">
+    <nav id="navbar">
+      <div class="navbar-top">
+        <a href="index.html" class="logo"
+          ><img src="assets/logo.svg" alt="KORE logo" class="site-logo"
+        /></a>
+        <div class="reddit-badge">REDDIT-POWERED</div>
+      </div>
+      <div class="navbar-bottom">
+        <ul class="nav-links">
+          <li><a href="shop.html" data-page="shop">SHOP</a></li>
+          <li><a href="community.html" data-page="community">NATION</a></li>
+          <li><a href="lab.html" data-page="lab">LAB</a></li>
+          <li><a href="story.html" data-page="story">STORY</a></li>
+          <li>
+            <a href="cart.html" data-page="cart" class="cart-link"
+              >CART <span class="cart-count" id="cart-count">0</span></a
+            >
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="lab-hero">
+      <h1 class="page-title">Off the screen.<br />Into your hands.</h1>
+      <p class="subtitle">Built to close the gap.</p>
+    </section>
+
+    <div class="ticker-wrap">
+      <div class="ticker">
+        <span>
+          UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK
+          YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE
+          POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL
+          ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ </span
+        ><span aria-hidden="true">
+          UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK
+          YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE
+          POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL
+          ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️</span
+        >
+      </div>
+    </div>
+    <div class="ticker-wrap ticker-white">
+      <div class="ticker ticker-right">
+        <span
+          >⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡
+          FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE
+          SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE
+          SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ </span
+        ><span aria-hidden="true"
+          >⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡
+          FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE
+          SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE
+          SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡
+        </span>
+      </div>
+    </div>
+
+    <section class="general-section">
+      <h2>Let the engine help you.</h2>
+      <p class="section-sub">What do you want to improve today?</p>
+    </section>
+
+    <div class="category-select" id="category-select">
+      <button
+        class="btn-cat"
+        data-cat="Productivity"
+        onclick="selectCategory('Productivity')"
+      >
+        Productivity
+      </button>
+      <button
+        class="btn-cat"
+        data-cat="Mental Health"
+        onclick="selectCategory('Mental Health')"
+      >
+        Mental Health
+      </button>
+      <button
+        class="btn-cat"
+        data-cat="Health"
+        onclick="selectCategory('Health')"
+      >
+        Health
+      </button>
+      <button
+        class="btn-cat"
+        data-cat="Glow up"
+        onclick="selectCategory('Glow up')"
+      >
+        Glow Up
+      </button>
+    </div>
+
+    <!-- ══ BOT SECTION ══════════════════════════════════════════════════════ -->
+    <section class="bot-section">
+      <p class="section-sub">The bot sees what you're not saying.</p>
+
+      <!-- Teaser: 3 ghost posts before button press -->
+      <div class="feed-preview" id="feed-preview">
+        <div id="preview-list"></div>
+      </div>
+      <p class="feed-hint" id="feed-hint"></p>
+
+      <!-- Full live feed (hidden until bot runs) -->
+      <div class="reddit-feed" id="reddit-feed">
+        <div class="reddit-feed-header">KORE. BOT — SCANNING REDDIT</div>
+        <div id="reddit-feed-list"></div>
+      </div>
+
+      <div class="scanning-indicator" id="scanning-indicator">
+        SCANNING
+        <div class="dot-loader"><span></span><span></span><span></span></div>
+      </div>
+
+      <!-- Selected post detail -->
+      <div class="selected-post-display" id="selected-post">
+        <div class="selected-post-header" id="sp-sub"></div>
+        <div class="selected-post-title" id="sp-title"></div>
+        <div class="selected-post-body" id="sp-body"></div>
+        <div class="selected-post-stats">
+          <span id="sp-votes">▲ 0</span>
+          <span id="sp-comments">💬 0 comments</span>
+        </div>
+      </div>
+
+      <div class="run-btn-wrap" id="run-engine-wrap" style="display: none">
+        <button class="btn-run" id="run-engine-btn" onclick="runEngine()">
+          RUN THE OBJECT ENGINE
+        </button>
+      </div>
+    </section>
+
+    <!-- ══ OBJECT ENGINE ════════════════════════════════════════════════════ -->
+    <section class="engine-section" id="engine-section">
+      <p class="section-sub">
+        The object engine understands your lows to build the fix.
+      </p>
+
+      <div class="analysis-card" id="step-thematic">
+        <div class="analysis-label">THEMATIC</div>
+        <div class="ai-thinking" id="think-thematic">
+          <div class="dot-loader"><span></span><span></span><span></span></div>
+          Analysing post content…
+        </div>
+        <div id="thematic-bars"></div>
+      </div>
+
+      <div class="analysis-card" id="step-context">
+        <div class="analysis-label">CONTEXT</div>
+        <div class="ai-thinking" id="think-context">
+          <div class="dot-loader"><span></span><span></span><span></span></div>
+          Identifying context…
+        </div>
+        <div id="context-bars"></div>
+      </div>
+
+      <div class="analysis-card" id="step-emotion">
+        <div class="analysis-label">EMOTION</div>
+        <div class="ai-thinking" id="think-emotion">
+          <div class="dot-loader"><span></span><span></span><span></span></div>
+          Reading emotional tone…
+        </div>
+        <div id="emotion-bars"></div>
+      </div>
+
+      <div class="analysis-card" id="step-need">
+        <div class="analysis-label">KORE. NEED</div>
+        <div class="ai-thinking" id="think-need">
+          <div class="dot-loader"><span></span><span></span><span></span></div>
+          Determining kore need…
+        </div>
+        <div id="need-bars"></div>
+        <div class="need-result" id="need-result"></div>
+      </div>
+
+      <div class="analysis-card" id="step-solution">
+        <div class="analysis-label">KORE. SOLUTION</div>
+        <div class="ai-thinking" id="think-solution">
+          <div class="dot-loader"><span></span><span></span><span></span></div>
+          Generating object…
+        </div>
+        <div class="solution-media-wrap" id="solution-media">
+          <div class="solution-generating">
+            <div class="dot-loader">
+              <span></span><span></span><span></span>
+            </div>
+            <span id="gen-label">Initialising…</span>
+          </div>
+        </div>
+        <div class="solution-product-name" id="solution-name"></div>
+        <div
+          class="solution-shop-link"
+          id="solution-link"
+          style="display: none"
+        >
+          <a href="#" class="btn-orange" id="solution-btn">SHOP NOW</a>
+        </div>
+      </div>
+    </section>
+
+    <div class="float-banner" aria-hidden="true">
+      <div class="float-track">
+        <!-- Duplique tous les items deux fois pour la boucle seamless -->
+        <div class="float-item">
+          <img src="assets/objects/apppuncher.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/believeit.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/deeptie.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/innerhug.png" alt="" />
+        </div>
+        <!-- Répétition exacte pour boucle infinie seamless -->
+        <div class="float-item">
+          <img src="assets/objects/stayfresh.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/unfog.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/apppuncher.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/believeit.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/deeptie.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/innerhug.png" alt="" />
+        </div>
+        <!-- Répétition exacte pour boucle infinie seamless -->
+        <div class="float-item">
+          <img src="assets/objects/stayfresh.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/unfog.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/apppuncher.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/believeit.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/deeptie.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/innerhug.png" alt="" />
+        </div>
+        <!-- Répétition exacte pour boucle infinie seamless -->
+        <div class="float-item">
+          <img src="assets/objects/stayfresh.png" alt="" />
+        </div>
+        <div class="float-item">
+          <img src="assets/objects/unfog.png" alt="" />
+        </div>
+      </div>
+    </div>
+
+    <!-- JOIN -->
+
+    <section class="cta-band">
+      <h2>Start your kore journey today.</h2>
+      <p class="subtitle">Your post could be next.</p>
+      <a href="community.html" class="btn-white">JOIN THE NATION</a>
+      <p class="small-text">FROM CHF 9.90.- / MONTH</p>
+    </section>
+
+    <div class="ticker-wrap">
+      <div class="ticker">
+        <span>
+          UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK
+          YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE
+          POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL
+          ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ </span
+        ><span aria-hidden="true">
+          UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK
+          YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE
+          POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL
+          ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️ UNLOCK YOUR KORE POTENTIAL ⭐️</span
+        >
+      </div>
+    </div>
+
+    <footer>
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="index.html" class="logo footer-logo"
+            ><img src="assets/logo.svg" alt="KORE logo" class="site-logo"
+          /></a>
+          <p class="footer-tagline">UNLOCK YOUR KORE POTENTIAL</p>
+          <p class="footer-disclaimer">
+            KORE. is part of a <a href="project.html">design project</a>,
+            everything here is fiction. If you believed it, ask yourself why?
+          </p>
+          <div class="footer-wave">
+            <img
+              src="assets/wave-orange-rose.svg"
+              alt=""
+              aria-hidden="true"
+              onerror="this.src = 'assets/wave-web.png'"
+            />
+          </div>
+        </div>
+        <nav class="footer-nav">
+          <a href="index.html">HOME</a>
+          <a href="community.html">NATION</a>
+          <a href="lab.html">THE LAB</a>
+          <a href="story.html">STORY</a>
+        </nav>
+      </div>
+      <div class="footer-bottom">
+        <a href="#">INSTAGRAM</a>
+        <a href="#">TIKTOK</a>
+        <a href="#">FACEBOOK</a>
+        <a href="#">LINKEDIN</a>
+        <a href="#" class="get-in-touch">GET IN TOUCH</a>
+      </div>
+    </footer>
+
+    <script src="csv-loader.js"></script>
+    <script src="app.js"></script>
+    <script src="animations.js"></script>
+    <script>
+      // ══════════════════════════════════════════════════════════════════════
+      // LAB PAGE — BOT + OBJECT ENGINE
+      // ══════════════════════════════════════════════════════════════════════
+
+      let allFeedPosts = [];
+      let selectedGenData = null;
+      let activeCategory = null;
+      let isScanning = false;
+
+      // ── Called by csv-loader once data is ready ──────────────────────────
+      window.onDataReady = function () {
+        allFeedPosts = [
+          ...generatorData.map((g) => ({
+            subreddit: g.subreddit,
+            title: g.postTitle,
+            upvotes: g.upvotes,
+            comments: g.comments,
+            isReal: true,
+            data: g,
+          })),
+          ...fakeRedditPosts.map((f) => ({ ...f, isReal: false })),
+        ];
+        renderPreview();
+      };
+
+      initKORE();
+
+      // ── PREVIEW: 3 blurred ghost posts before button is pressed ──────────
+      function renderPreview() {
+        const sample = [...allFeedPosts]
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 3);
+        document.getElementById("preview-list").innerHTML = sample
+          .map(
+            (p, i) => `
+    <div class="reddit-post" style="opacity:${0.9 - i * 0.28};filter:blur(${i * 1.5}px);">
+      <div class="reddit-post-votes">
+        <span class="upvote">▲</span>
+        <span class="count">${p.upvotes}</span>
+      </div>
+      <div class="reddit-post-content">
+        <div class="reddit-post-sub">${p.subreddit}</div>
+        <div class="reddit-post-title">${p.title}</div>
+        <div class="reddit-post-meta">▸ ${p.comments} comments</div>
+      </div>
+    </div>
+  `,
+          )
+          .join("");
+      }
+
+      // ── LIVE FEED renderer ───────────────────────────────────────────────
+      function renderFeed(posts, highlightIndex) {
+        document.getElementById("reddit-feed-list").innerHTML = posts
+          .map(
+            (p, i) => `
+    <div class="reddit-post ${i === highlightIndex ? "selected" : ""}">
+      <div class="reddit-post-votes">
+        <span class="upvote">▲</span>
+        <span class="count">${p.upvotes}</span>
+      </div>
+      <div class="reddit-post-content">
+        <div class="reddit-post-sub">${p.subreddit}</div>
+        <div class="reddit-post-title">${p.title}</div>
+        <div class="reddit-post-meta">▸ ${p.comments} comments</div>
+      </div>
+    </div>
+  `,
+          )
+          .join("");
+      }
+
+      // ── SELECT CATEGORY ──────────────────────────────────────────────────
+      function selectCategory(cat) {
+        if (isScanning) return;
+        activeCategory = cat;
+        document.querySelectorAll(".btn-cat").forEach((b) => {
+          b.classList.toggle("active", b.dataset.cat === cat);
+        });
+        runBot(cat);
+      }
+
+      // ── RUN THE BOT ──────────────────────────────────────────────────────
+      function runBot(category) {
+        isScanning = true;
+        document.querySelectorAll(".btn-cat").forEach((b) => {
+          b.disabled = true;
+        });
+
+        // Hide teaser, show live feed
+        document.getElementById("feed-preview").style.display = "none";
+        document.getElementById("feed-hint").style.display = "none";
+        document.getElementById("reddit-feed").classList.add("visible");
+        document.getElementById("scanning-indicator").classList.add("visible");
+        document.getElementById("selected-post").classList.remove("visible");
+        document.getElementById("run-engine-wrap").style.display = "none";
+        document.getElementById("engine-section").classList.remove("visible");
+
+        // Real posts filtered by the selected category
+        const catLower = (category || "").toLowerCase();
+        let realPosts = allFeedPosts.filter((p) => {
+          if (!p.isReal) return false;
+          const product = products.find((prod) => prod.id === p.data.productId);
+          return product && product.collection.toLowerCase() === catLower;
+        });
+        if (!realPosts.length) realPosts = allFeedPosts.filter((p) => p.isReal);
+
+        const chosen = realPosts[Math.floor(Math.random() * realPosts.length)];
+        selectedGenData = chosen.data;
+
+        // Build fake display posts directly from fakeRedditPosts (reliable, no filter chain)
+        const fakePosts = fakeRedditPosts
+          .filter((f) => (f.category || "").toLowerCase() === catLower)
+          .map((f) => ({ ...f, isReal: false }));
+
+        // Display pool: real posts for this category + matching decorative fake posts
+        const displayPool = [...realPosts, ...fakePosts];
+
+        // Rapid shuffle then settle on chosen
+        let count = 0;
+        const MAX = 14;
+        const interval = setInterval(() => {
+          count++;
+          const pool = [...displayPool]
+            .sort(() => Math.random() - 0.5)
+            .slice(0, 7);
+          pool.splice(Math.floor(Math.random() * 8), 0, chosen);
+          const display = pool.slice(0, 8);
+          const chosenIdx = display.indexOf(chosen);
+          // Highlight bounces randomly during scan, then locks onto chosen at the end
+          const highlightIdx =
+            count > MAX - 3
+              ? chosenIdx
+              : Math.floor(Math.random() * display.length);
+          renderFeed(display, highlightIdx);
+
+          if (count >= MAX) {
+            clearInterval(interval);
+            // Final stable list
+            const final = [...displayPool]
+              .sort(() => Math.random() - 0.5)
+              .filter((p) => p !== chosen)
+              .slice(0, 7);
+            final.splice(2, 0, chosen);
+            renderFeed(final, 2);
+
+            setTimeout(() => {
+              document
+                .getElementById("scanning-indicator")
+                .classList.remove("visible");
+              document.getElementById("selected-post").classList.add("visible");
+              document.getElementById("sp-sub").textContent = chosen.subreddit;
+              document.getElementById("sp-title").textContent = chosen.title;
+              document.getElementById("sp-body").textContent =
+                chosen.data.postBody || "";
+              document.getElementById("sp-votes").textContent =
+                `▲ ${chosen.upvotes}`;
+              document.getElementById("sp-comments").textContent =
+                `💬 ${chosen.comments} comments`;
+
+              document.getElementById("run-engine-wrap").style.display =
+                "block";
+              document.querySelectorAll(".btn-cat").forEach((b) => {
+                b.disabled = false;
+              });
+              isScanning = false;
+            }, 350);
+          }
+        }, 110);
+      }
+
+      // ═══════════════════════════════════════════════════════════════════════
+      // OBJECT ENGINE
+      // Each step: 1) fade card in  2) show dots (random delay)  3) inject content
+      // 4) double-rAF so browser paints width:0% THEN transitions to real %
+      // ═══════════════════════════════════════════════════════════════════════
+
+      function delay(ms) {
+        return new Promise((r) => setTimeout(r, ms));
+      }
+
+      // Reveal a card (fade-in) — force reflow so CSS transition fires
+      function showCard(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        // Reading offsetHeight forces the browser to reflow/repaint,
+        // which ensures the transition from opacity:0 actually animates.
+        void el.offsetHeight;
+        el.classList.add("in");
+      }
+
+      // Hide the "thinking" dots row
+      function hideThinker(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add("hidden");
+      }
+
+      // Inject bar HTML then trigger transition via double rAF
+      function injectAndAnimateBars(containerId, barsHTML) {
+        return new Promise((resolve) => {
+          const container = document.getElementById(containerId);
+          if (!container) {
+            resolve();
+            return;
+          }
+          container.innerHTML = barsHTML;
+          // Double rAF: paint width:0% first, then set real widths
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              container.querySelectorAll(".bar-fill").forEach((bar) => {
+                bar.style.width = bar.dataset.pct + "%";
+              });
+              setTimeout(resolve, 1300); // wait for 1.2s transition + buffer
+            }),
+          );
+        });
+      }
+
+      // Parse "42% Mental Health/33% Health" → [{pct,label}]
+      function parseBars(str) {
+        return (str || "")
+          .split("/")
+          .map((s) => {
+            const m = s.trim().match(/^(\d+)%\s*(.+)$/);
+            return m ? { pct: parseInt(m[1]), label: m[2].trim() } : null;
+          })
+          .filter(Boolean);
+      }
+
+      function makeBarsHTML(bars) {
+        return bars
+          .map(
+            (b) => `
+    <div class="bar-group">
+      <div class="bar-label">${b.pct}% ${b.label.toUpperCase()}</div>
+      <div class="bar-track">
+        <div class="bar-fill" data-pct="${b.pct}" style="width:0%"></div>
+      </div>
+    </div>
+  `,
+          )
+          .join("");
+      }
+
+      // Type text letter by letter
+      function typeText(elId, text, ms) {
+        return new Promise((resolve) => {
+          const el = document.getElementById(elId);
+          if (!el) {
+            resolve();
+            return;
+          }
+          el.textContent = "";
+          let i = 0;
+          const t = setInterval(() => {
+            el.textContent += text[i++];
+            if (i >= text.length) {
+              clearInterval(t);
+              resolve();
+            }
+          }, ms);
+        });
+      }
+
+      // ── RUN THE OBJECT ENGINE ────────────────────────────────────────────
+      async function runEngine() {
+        if (!selectedGenData) return;
+        const g = selectedGenData;
+
+        const engineBtn = document.getElementById("run-engine-btn");
+        engineBtn.disabled = true;
+        engineBtn.textContent = "GENERATING…";
+
+        // Show section, scroll to it
+        console.log(
+          "🔧 runEngine — selectedGenData:",
+          JSON.stringify(g, null, 2),
+        );
+
+        const section = document.getElementById("engine-section");
+        section.classList.add("visible");
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        // Reset all cards — remove .in class, CSS handles opacity/transform
+        [
+          "step-thematic",
+          "step-context",
+          "step-emotion",
+          "step-need",
+          "step-solution",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.classList.remove("in");
+          }
+        });
+        // Reset thinkers
+        [
+          "think-thematic",
+          "think-context",
+          "think-emotion",
+          "think-need",
+          "think-solution",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.classList.remove("hidden");
+        });
+        // Clear bar containers + result fields
+        ["thematic-bars", "context-bars", "emotion-bars", "need-bars"].forEach(
+          (id) => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = "";
+          },
+        );
+        document.getElementById("need-result").textContent = "";
+        document.getElementById("solution-name").textContent = "";
+        document.getElementById("solution-link").style.display = "none";
+        // Reset media
+        document.getElementById("solution-media").innerHTML = `
+    <div class="solution-generating">
+      <div class="dot-loader"><span></span><span></span><span></span></div>
+      <span id="gen-label">Initialising…</span>
+    </div>`;
+
+        // Wait for scroll to finish before starting
+        await delay(600);
+
+        // ── THEMATIC ──────────────────────────────────────────────────────
+        showCard("step-thematic");
+        await delay(900 + Math.random() * 900); // thinking time
+        hideThinker("think-thematic");
+        await injectAndAnimateBars(
+          "thematic-bars",
+          makeBarsHTML(parseBars(g.thematic)),
+        );
+
+        // ── CONTEXT ───────────────────────────────────────────────────────
+        await delay(400);
+        showCard("step-context");
+        await delay(700 + Math.random() * 800);
+        hideThinker("think-context");
+        await injectAndAnimateBars(
+          "context-bars",
+          makeBarsHTML(parseBars(g.context)),
+        );
+
+        // ── EMOTION ───────────────────────────────────────────────────────
+        await delay(400);
+        showCard("step-emotion");
+        await delay(700 + Math.random() * 900);
+        hideThinker("think-emotion");
+        await injectAndAnimateBars(
+          "emotion-bars",
+          makeBarsHTML(parseBars(g.emotion)),
+        );
+
+        // ── NEED ──────────────────────────────────────────────────────────
+        await delay(400);
+        showCard("step-need");
+        await delay(800 + Math.random() * 700);
+        hideThinker("think-need");
+        // Show full need string (e.g. "100% Track" or "50% Motivate — 50% Track")
+        /*  const needText = (g.need || '').replace(/\//g, ' — ');
+  await typeText('need-result', needText.toUpperCase(), 45); */
+        await injectAndAnimateBars(
+          "need-bars",
+          makeBarsHTML(parseBars(g.need)),
+        );
+
+        // ── SOLUTION ──────────────────────────────────────────────────────
+        await delay(500);
+        showCard("step-solution");
+        await delay(1000 + Math.random() * 800);
+        hideThinker("think-solution");
+
+        // Cycle "generating" labels in the media placeholder
+        const genLabels = [
+          "Combining objects…",
+          "Shaping geometry…",
+          "Applying materials…",
+          "Finalising render…",
+        ];
+        let li = 0;
+        const labelEl = document.getElementById("gen-label");
+        const labelCycle = setInterval(() => {
+          li = (li + 1) % genLabels.length;
+          if (labelEl) labelEl.textContent = genLabels[li];
+        }, 650);
+
+        await delay(2000 + Math.random() * 1000);
+        clearInterval(labelCycle);
+
+        // Show image or video from CSV 'file' column
+        const product = products.find((p) => p.id === g.productId);
+        const mediaFile = g.file || (product && product.mainImage) || "";
+        const mediaWrap = document.getElementById("solution-media");
+
+        if (mediaFile) {
+          const isVideo = /\.(mp4|webm|mov)$/i.test(mediaFile);
+          mediaWrap.innerHTML = isVideo
+            ? `<video src="assets/products/${mediaFile}" autoplay loop muted playsinline></video>`
+            : `<img src="assets/products/${mediaFile}" alt="${g.solution}"
+             onerror="this.outerHTML='<div class=solution-generating style=padding:20px;><span>Image coming soon</span></div>'">`;
+        } else {
+          mediaWrap.innerHTML = `<div class="solution-generating"><span>Image coming soon</span></div>`;
+        }
+
+        // Type out solution name
+        await typeText("solution-name", g.solution, 55);
+
+        // Shop link
+        if (product) {
+          document.getElementById("solution-btn").href =
+            `product.html?id=${product.id}`;
+        }
+        document.getElementById("solution-link").style.display = "block";
+
+        engineBtn.textContent = "RUN AGAIN";
+        engineBtn.disabled = false;
+        engineBtn.onclick = () => runEngine();
+      }
+    </script>
+  </body>
+</html>

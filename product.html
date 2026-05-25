@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KORE. — Product</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Chango&family=Poppins:ital,wght@0,600;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Main product image */
+    .product-main-img {
+      width: 100%;
+      aspect-ratio: 1;
+      background: var(--white);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-main-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: opacity 0.2s;
+    }
+
+    /* Thumbnail strip */
+    .product-thumbs {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .product-thumb {
+      width: 68px;
+      height: 68px;
+      flex-shrink: 0;
+      background: #f0f0f0;
+      border: 2px solid transparent;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-thumb.active {
+      border-color: var(--orange);
+    }
+    .product-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+    .product-thumb .ph {
+      font-size: 1.4rem;
+      opacity: 0.4;
+    }
+  </style>
+</head>
+<body data-page="shop">
+
+<nav id="navbar">
+  <div class="navbar-top">
+    <a href="index.html" class="logo"><img src="assets/logo.svg" alt="KORE logo" class="site-logo"></a>
+    <div class="reddit-badge">REDDIT POWERED</div>
+  </div>
+  <div class="navbar-bottom">
+    <ul class="nav-links">
+      <li><a href="shop.html"      data-page="shop">SHOP</a></li>
+      <li><a href="community.html" data-page="community">NATION</a></li>
+      <li><a href="lab.html"       data-page="lab">LAB</a></li>
+      <li><a href="story.html"     data-page="story">STORY</a></li>
+      <li><a href="cart.html"      data-page="cart" class="cart-link">CART <span class="cart-count" id="cart-count">0</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="product-page" id="product-page-content">
+  <p style="padding:60px;text-align:center;font-family:var(--font-body);font-style:italic;">Loading product…</p>
+</div>
+
+<section class="faves-section">
+  <h2>YOU MIGHT ALSO LIKE</h2>
+  <div class="products-grid" id="related-grid"></div>
+  <a href="shop.html" class="btn-outline">SEE ALL</a>
+</section>
+
+<div class="ticker-wrap ticker-white">
+  <div class="ticker ticker-right">
+    <span>FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ </span><span aria-hidden="true">⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ FREE SHIPPING FROM CHF 150.- ⚡ </span>
+  </div>
+</div>
+
+<section class="lab-promo">
+  <h2>FROM REDDIT TO<br>YOUR MAIL BOX</h2>
+  <p class="subtitle">MEET OUR KORE. BOT & KORE. OBJECT ENGINE</p>
+  <a href="lab.html" class="btn-white">THE LAB</a>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="logo footer-logo"><img src="assets/logo.svg" alt="KORE logo" class="site-logo"></a>
+      <p class="footer-tagline">UNLOCK YOUR KORE POTENTIAL</p>
+      <p class="footer-disclaimer">KORE. is part of a <a href="project.html">design project</a>, everything here is fiction. If you believed it, ask yourself why?</p>
+      <div class="footer-wave">
+        <img src="assets/wave-orange-rose.svg" alt="" aria-hidden="true" onerror="this.src='assets/wave-web.png'" >
+      </div>
+    </div>
+    <nav class="footer-nav">
+      <a href="index.html">HOME</a>
+      <a href="community.html">NATION</a>
+      <a href="lab.html">THE LAB</a>
+      <a href="story.html">STORY</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <a href="#">INSTAGRAM</a><a href="#">TIKTOK</a><a href="#">FACEBOOK</a><a href="#">LINKEDIN</a>
+    <a href="#" class="get-in-touch">GET IN TOUCH</a>
+  </div>
+</footer>
+
+<script src="csv-loader.js"></script>
+<script src="app.js"></script>
+<script src="animations.js">
+<!--remove--></script>
+<script>
+window.onDataReady = function () {
+  const params    = new URLSearchParams(window.location.search);
+  const productId = params.get('id');
+  const product   = products.find(p => p.id === productId);
+
+  if (!product) {
+    document.getElementById('product-page-content').innerHTML = `
+      <div style="text-align:center;padding:80px 40px;">
+        <h1 style="font-family:var(--font-title);font-size:3rem;color:var(--orange);text-transform:uppercase;">404</h1>
+        <p style="font-family:var(--font-body);font-style:italic;font-weight:700;margin:20px 0;">Product not found.</p>
+        <a href="shop.html" class="btn-outline">BACK TO SHOP</a>
+      </div>`;
+    return;
+  }
+
+  document.title = `KORE. — ${product.name}`;
+
+  // ── Gallery ──────────────────────────────────────────────────────────────
+  // gallery[0] = mainImage (Files column)
+  // gallery[1+] = closeUps (Close Ups column, "/" separated)
+  // We always show the main image first; close-ups are extras.
+
+  const gallery = [];
+  if (product.mainImage) gallery.push(product.mainImage);
+  (product.closeUps || []).forEach(f => { if (f) gallery.push(f); });
+
+  // Fallback: if somehow no images, show one placeholder slot
+  const hasImages = gallery.length > 0;
+
+  // ── Helpers ──────────────────────────────────────────────────────────────
+  function imgPath(file) { return `assets/products/${file}`; }
+
+  function mainImgHTML(file) {
+    if (!file) return `
+      <div class="coming-soon-placeholder" style="height:100%;width:100%;">
+        <span class="cs-icon">⚙️</span>
+        <span class="cs-text">Still in development<br>Images coming soon</span>
+      </div>`;
+    return `<img id="main-product-img" src="${imgPath(file)}" alt="${product.name}"
+      onerror="this.outerHTML='<div class=coming-soon-placeholder style=height:100%;width:100%;><span class=cs-icon>⚙️</span><span class=cs-text>Image coming soon</span></div>'">`;
+  }
+
+  function thumbHTML(file, index) {
+    const inner = file
+      ? `<img src="${imgPath(file)}" alt="View ${index + 1}"
+             onerror="this.parentElement.innerHTML='<div class=ph>⚙️</div>'">`
+      : `<div class="ph">⚙️</div>`;
+    return `<div class="product-thumb ${index === 0 ? 'active' : ''}"
+                 onclick="switchImg(this, '${file || ''}')">${inner}</div>`;
+  }
+
+  // Only show thumbs if there are 2+ images (main + at least one close-up)
+  const thumbsHTML = gallery.length > 1
+    ? `<div class="product-thumbs">${gallery.map((f, i) => thumbHTML(f, i)).join('')}</div>`
+    : '';
+
+  // ── Render ───────────────────────────────────────────────────────────────
+  document.getElementById('product-page-content').innerHTML = `
+    <div class="product-breadcrumb">
+      <a href="shop.html">← Back to the shop</a>
+    </div>
+    <div class="product-layout">
+      <div>
+        <div class="product-main-img" id="main-img-wrap">
+          <span class="free-shipping-tag">FREE SHIPPING</span>
+          ${mainImgHTML(hasImages ? gallery[0] : null)}
+        </div>
+        ${thumbsHTML}
+      </div>
+      <div class="product-details">
+        <h1>${product.name}</h1>
+        <div class="subtitle-label">${product.subtitle}</div>
+        <p class="description">${product.description}</p>
+        <div class="product-price-big">CHF ${product.price}.-</div>
+        <button class="btn-add-cart" onclick="addToCart('${product.id}')">ADD TO CART</button>
+        <div class="co-created">
+          Co-created by Reddit user
+          <a href="${product.link}" target="_blank" rel="noopener">${product.user}</a>
+        </div>
+      </div>
+    </div>`;
+
+  // ── Related products ─────────────────────────────────────────────────────
+  const related = products
+    .filter(p => p.id !== product.id)
+    .sort((a, b) => a.collection === product.collection ? -1 : 1)
+    .slice(0, 3);
+  renderProducts('related-grid', related, true);
+};
+
+// Switch main image when thumbnail is clicked
+function switchImg(thumbEl, file) {
+  document.querySelectorAll('.product-thumb').forEach(t => t.classList.remove('active'));
+  thumbEl.classList.add('active');
+  if (!file) return;
+
+  const wrap = document.getElementById('main-img-wrap');
+  const old  = wrap.querySelector('img, .coming-soon-placeholder');
+  if (old) old.remove();
+
+  const img = document.createElement('img');
+  img.id             = 'main-product-img';
+  img.src            = `assets/products/${file}`;
+  img.style.cssText  = 'width:100%;height:100%;object-fit:cover;display:block;';
+  img.onerror = () => {
+    img.outerHTML = `<div class="coming-soon-placeholder" style="height:100%;width:100%;">
+      <span class="cs-icon">⚙️</span><span class="cs-text">Image coming soon</span></div>`;
+  };
+  wrap.appendChild(img);
+}
+
+initKORE();
+</script>
+</body>
+</html>
