@@ -75,6 +75,23 @@ function parseCloseUps(str) {
   return str.split(sep).map(s => s.trim()).filter(Boolean);
 }
 
+// ── Cache (sessionStorage, 5-min TTL) ─────────────────────────────────────
+const CACHE_TTL = 5 * 60 * 1000;
+
+function cacheGet(key) {
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    if (Date.now() - ts > CACHE_TTL) { sessionStorage.removeItem(key); return null; }
+    return data;
+  } catch (_) { return null; }
+}
+
+function cacheSet(key, data) {
+  try { sessionStorage.setItem(key, JSON.stringify({ ts: Date.now(), data })); } catch (_) {}
+}
+
 // ── Global state ───────────────────────────────────────────────────────────
 let products      = [];
 let generatorData = [];
@@ -116,17 +133,16 @@ function randomComments() { return randFrom(['241','318','441','507','678','892'
 
 // ── Products ───────────────────────────────────────────────────────────────
 async function loadProducts() {
+  const cached = cacheGet('kore_products');
+  if (cached) { products = cached; console.log(`✅ KORE. ${products.length} products (cache)`); return; }
   try {
     const res = await fetch('assets/OBJECTS_ON_SALE.csv');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const rows = parseCSV(await res.text());
 
     products = rows.map(r => {
-      // Files → single main image (trim, take whole value — one filename)
       const mainImage = (r['Files'] || r['files'] || '').trim();
-      // Close Ups → array of extra images, "/" separated
       const closeUps  = parseCloseUps(r['Close Ups'] || r['close ups'] || r['CloseUps'] || '');
-
       return {
         id:          toId(r['Name'] || r['name'] || ''),
         name:        (r['Name'] || r['name'] || '').toUpperCase(),
@@ -137,13 +153,13 @@ async function loadProducts() {
         link:        r['Link']        || r['link']        || '#',
         month:       r['Month']       || r['month']       || '',
         collection:  r['Collection']  || r['collection']  || '',
-        mainImage,   // string — one filename or ''
-        closeUps,    // string[] — 0..N filenames
+        mainImage,
+        closeUps,
       };
     }).filter(p => p.id && p.name);
 
+    cacheSet('kore_products', products);
     console.log(`✅ KORE. ${products.length} products loaded`);
-    products.forEach(p => console.log(`  ${p.name} | main: ${p.mainImage} | closeUps: [${p.closeUps.join(', ')}]`));
   } catch (e) {
     console.warn('⚠️ Could not load OBJECTS_ON_SALE.csv:', e.message);
     products = [];
@@ -152,6 +168,8 @@ async function loadProducts() {
 
 // ── Generator ──────────────────────────────────────────────────────────────
 async function loadGenerator() {
+  const cached = cacheGet('kore_generator');
+  if (cached) { generatorData = cached; console.log(`✅ KORE. ${generatorData.length} generator entries (cache)`); return; }
   try {
     const res = await fetch('assets/GENERATOR.csv');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -165,7 +183,6 @@ async function loadGenerator() {
       const subMatch     = url.match(/reddit\.com\/r\/([^/]+)/);
       const slugMatch    = url.match(/comments\/[^/]+\/([^/]+)/);
       const titleFromSlug = slugMatch ? slugMatch[1].replace(/_/g, ' ') : solutionName;
-
       return {
         url,
         subreddit:  subMatch ? `r/${subMatch[1]}` : 'r/reddit',
@@ -185,8 +202,11 @@ async function loadGenerator() {
       };
     }).filter(g => g.url);
 
-    await Promise.all(generatorData.map(g => fetchRedditPost(g)));
     console.log(`✅ KORE. ${generatorData.length} generator entries loaded`);
+    // Enrich with real Reddit data in background — don't block onDataReady
+    Promise.all(generatorData.map(g => fetchRedditPost(g))).then(() => {
+      cacheSet('kore_generator', generatorData);
+    });
   } catch (e) {
     console.warn('⚠️ Could not load GENERATOR.csv:', e.message);
     generatorData = [];
@@ -195,8 +215,11 @@ async function loadGenerator() {
 
 async function fetchRedditPost(entry) {
   try {
+    const controller = new AbortController();
+    const tid = setTimeout(() => controller.abort(), 4000);
     const jsonUrl = entry.url.replace(/\/?$/, '.json') + '?limit=1';
-    const res = await fetch(jsonUrl, { headers: { 'Accept': 'application/json' } });
+    const res = await fetch(jsonUrl, { headers: { 'Accept': 'application/json' }, signal: controller.signal });
+    clearTimeout(tid);
     if (!res.ok) return;
     const data = await res.json();
     const post = data?.[0]?.data?.children?.[0]?.data;
@@ -216,6 +239,8 @@ function fmtNum(n) {
 
 // ── Fake Reddit Posts from CSV ─────────────────────────────────────────────
 async function loadFakePosts() {
+  const cached = cacheGet('kore_fake_posts');
+  if (cached) { fakeRedditPosts.push(...cached); console.log(`✅ KORE. ${cached.length} fake posts (cache)`); return; }
   try {
     const res = await fetch('assets/FAKE_REDDIT_POSTS.csv');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -225,11 +250,9 @@ async function loadFakePosts() {
       const url      = (r['url'] || r['Url'] || '').trim();
       const category = (r['category'] || r['Category'] || '').trim();
       if (!url) return null;
-
       const subMatch  = url.match(/reddit\.com\/r\/([^/]+)/);
       const slugMatch = url.match(/comments\/[^/]+\/([^/]+)/);
       const fallback  = slugMatch ? slugMatch[1].replace(/_/g, ' ') : 'Reddit post';
-
       return {
         url,
         category,
@@ -240,8 +263,10 @@ async function loadFakePosts() {
       };
     }).filter(Boolean);
 
-    // Try to enrich with real Reddit data (title, score, comments)
-    await Promise.all(entries.map(async e => {
+    // Push immediately so onDataReady has data; enrich Reddit titles in background
+    fakeRedditPosts.push(...entries);
+    console.log(`✅ KORE. ${entries.length} fake posts loaded from CSV`);
+    Promise.all(entries.map(async e => {
       try {
         const jsonUrl = e.url.replace(/\/?$/, '.json') + '?limit=1';
         const r2 = await fetch(jsonUrl, { headers: { 'Accept': 'application/json' } });
@@ -254,10 +279,9 @@ async function loadFakePosts() {
         if (post.num_comments) e.comments  = fmtNum(post.num_comments);
         if (post.subreddit)    e.subreddit = `r/${post.subreddit}`;
       } catch (_) {}
-    }));
-
-    fakeRedditPosts.push(...entries);
-    console.log(`✅ KORE. ${entries.length} fake posts loaded from CSV`);
+    })).then(() => {
+      cacheSet('kore_fake_posts', entries);
+    });
   } catch (e) {
     console.warn('⚠️ Could not load FAKE_REDDIT_POSTS.csv:', e.message);
   }
