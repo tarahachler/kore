@@ -138,9 +138,8 @@ function injectGlobals() {
       <div class="modal-title">404.</div>
       <div class="modal-subtitle">This is a design project.</div>
       <p class="modal-text">
-        KORE is a fictional brand created as part of a project in the Master Media Design at HEAD — Genève
+        KORE. is a fictional brand created as part of a project in the Master Media Design at HEAD — Genève
         (Haute École d'Art et de Design). Everything here is fiction.<br><br>
-        If you believed it, ask yourself why.
       </p>
       <p class="modal-school">HEAD — GENÈVE, 2026</p>
       <a href="project.html" class="btn-orange">Project description</a>
