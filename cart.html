@@ -150,9 +150,11 @@
         ${cart.map(item => `
           <div class="cart-item" id="ci-${item.id}">
             <div class="cart-item-img">
-              <div class="coming-soon-placeholder" style="height:80px;">
-                <span style="font-size:1.5rem;">⚙️</span>
-              </div>
+              ${item.image
+                ? `<img src="assets/products/${item.image}" alt="${item.name}" style="width:80px;height:80px;object-fit:cover;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+                   <div class="coming-soon-placeholder" style="height:80px;display:none;"><span style="font-size:1.5rem;">⚙️</span></div>`
+                : `<div class="coming-soon-placeholder" style="height:80px;"><span style="font-size:1.5rem;">⚙️</span></div>`
+              }
             </div>
             <div>
               <div class="cart-item-name">${item.name}</div>
